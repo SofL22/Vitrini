@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="vitrini_primary">#F75C8D</color>
+    <color name="vitrini_primary_dark">#D93C70</color>
+    <color name="vitrini_secondary">#FFD6E5</color>
+    <color name="vitrini_background">#FFF8F1</color>
+    <color name="vitrini_card">#FFFFFF</color>
+    <color name="vitrini_text">#202020</color>
+    <color name="vitrini_text_secondary">#6B6B6B</color>
+    <color name="vitrini_error">#D32F2F</color>
+</resources>
