@@ -1,5 +1,7 @@
 plugins {
-    alias(libs.plugins.android.application)
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -34,6 +36,9 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
+kotlin {
+    jvmToolchain(11)
+}
 
 dependencies {
     implementation(libs.androidx.core.ktx)
@@ -44,4 +49,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation("com.google.code.gson:gson:2.11.0")
+    implementation("androidx.room:room-runtime:2.7.2")
+    implementation("androidx.room:room-ktx:2.7.2")
+    ksp("androidx.room:room-compiler:2.7.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
 }
