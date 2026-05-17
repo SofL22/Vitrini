@@ -3,24 +3,24 @@ package com.vitrini.app.utils
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.vitrini.app.model.Like
-import com.vitrini.app.model.User
+import com.vitrini.app.data.local.entity.LikeEntity
+import com.vitrini.app.data.local.entity.UserEntity
 
 class SessionManager(context: Context) {
     private val prefs = context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE)
     private val gson = Gson()
 
-    fun saveActiveUser(user: User) {
+    fun saveActiveUser(user: UserEntity) {
         val json = gson.toJson(user)
         prefs.edit()
             .putString(Constants.KEY_ACTIVE_USER, json)
             .apply()
     }
 
-    fun getActiveUser(): User? {
+    fun getActiveUser(): UserEntity? {
         val json = prefs.getString(Constants.KEY_ACTIVE_USER, null)
         return if (json != null) {
-            gson.fromJson(json, User::class.java)
+            gson.fromJson(json, UserEntity::class.java)
         } else {
             null
         }
@@ -45,32 +45,34 @@ class SessionManager(context: Context) {
     fun logout() {
         prefs.edit()
             .remove(Constants.KEY_ACTIVE_USER)
+            .remove(Constants.KEY_ACTIVE_USER_ID)
+            .remove(Constants.KEY_AUTH_TOKEN)
             .apply()
     }
 
-    fun saveLikes(likes: List<Like>) {
+    fun saveLikes(likes: List<LikeEntity>) {
         val json = gson.toJson(likes)
         prefs.edit()
             .putString(Constants.KEY_LIKES, json)
             .apply()
     }
 
-    fun getLikes(): MutableList<Like> {
+    fun getLikes(): MutableList<LikeEntity> {
         val json = prefs.getString(Constants.KEY_LIKES, null)
 
         return if (json != null) {
-            val type = object : TypeToken<MutableList<Like>>() {}.type
+            val type = object : TypeToken<MutableList<LikeEntity>>() {}.type
             gson.fromJson(json, type)
         } else {
             mutableListOf()
         }
     }
 
-    fun addLike(like: Like) {
+    fun addLike(like: LikeEntity) {
         val likes = getLikes()
 
         val alreadyExists = likes.any {
-            it.usuarioId == like.usuarioId && it.productoId == like.productoId
+            it.userId == like.userId && it.productId == like.productId
         }
 
         if (!alreadyExists) {
@@ -83,7 +85,7 @@ class SessionManager(context: Context) {
         val likes = getLikes()
 
         val updatedLikes = likes.filterNot {
-            it.usuarioId == userId && it.productoId == productId
+            it.userId == userId && it.productId == productId
         }
 
         saveLikes(updatedLikes)
@@ -91,7 +93,7 @@ class SessionManager(context: Context) {
 
     fun isProductLiked(userId: Int, productId: Int): Boolean {
         return getLikes().any {
-            it.usuarioId == userId && it.productoId == productId
+            it.userId == userId && it.productId == productId
         }
     }
 

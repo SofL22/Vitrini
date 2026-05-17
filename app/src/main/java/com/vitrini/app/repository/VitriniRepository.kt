@@ -1,26 +1,36 @@
 package com.vitrini.app.repository
 import com.vitrini.app.data.local.AppDatabase
+import com.vitrini.app.data.local.entity.BusinessEntity
+import com.vitrini.app.data.local.entity.ProductStorageEntity
 import com.vitrini.app.data.local.entity.ProductInteractionEntity
 import com.vitrini.app.data.local.entity.SavedProductEntity
-import com.vitrini.app.data.mapper.toLegacyModel
-import com.vitrini.app.data.mapper.toModel
-import com.vitrini.app.data.mapper.toEntity
-import com.vitrini.app.model.Business
-import com.vitrini.app.model.Product
-import com.vitrini.app.model.User
+import com.vitrini.app.data.local.entity.UserEntity
 import com.vitrini.app.utils.SessionManager
 import java.util.UUID
 
-class VitriniRepository (private val db: AppDatabase? = null, private val sessionManager: SessionManager? = null){
+class VitriniRepository(
+    private val db: AppDatabase? = null,
+    private val sessionManager: SessionManager? = null
+) {
 
-    suspend fun getActiveUser(): User? {
+    suspend fun getActiveUser(): UserEntity? {
         val userId = sessionManager?.getActiveUserId() ?: return null
-        return db?.userStorageDao()?.getUsersById(userId)?.toModel
+        return db?.users?.firstOrNull { it.id == userId }
     }
-    suspend fun saveLocalUser(user: User) = db?.userStorageDao()?.save(user.toEntity())
-    suspend fun getProductById(productId: String): Product? = db?.productStorageDao()?.getProductById(productId)?.toLegacyModel()
-    suspend fun getBusinessStorage() = db?.businessStorageDao()?.getBusinesses() ?: emptyList()
-    suspend fun getProductMedia(productId: String) = db?.productMediaDao()?.getMediaByProductId(productId) ?: emptyList()
+
+    suspend fun saveLocalUser(user: UserEntity) {
+        db?.users?.removeAll { it.id == user.id }
+        db?.users?.add(user)
+    }
+
+    suspend fun getProductById(productId: String): ProductStorageEntity? =
+        db?.products?.firstOrNull { it.id == productId }
+
+    suspend fun getBusinessStorage(): List<BusinessEntity> =
+        db?.businesses ?: emptyList()
+
+    suspend fun getProductMedia(productId: String) =
+        db?.productMedia?.filter { it.productId == productId } ?: emptyList()
 
     suspend fun registerView(productId: String, lastingMs: Long?) = registerInteraction(productId, "VIEW", lastingMs = lastingMs)
     suspend fun registerRightSwipe(productId: String) = registerInteraction(productId, "LIKE")
@@ -29,35 +39,49 @@ class VitriniRepository (private val db: AppDatabase? = null, private val sessio
 
     suspend fun saveProduct(productId: String) {
         val uid = sessionManager?.getActiveUserId() ?: return
-        db?.savedProductDao()?.saveProduct(SavedProductEntity(uid, productId, System.currentTimeMillis(), false))
+        db?.savedProducts?.add(SavedProductEntity(uid, productId, System.currentTimeMillis(), false))
         registerInteraction(productId, "SAVE")
     }
 
     suspend fun deleteSaved(productId: String) {
         val uid = sessionManager?.getActiveUserId() ?: return
-        db?.savedProductDao()?.deleteSaved(uid, productId)
+        db?.savedProducts?.removeAll { it.userId == uid && it.productId == productId }
         registerInteraction(productId, "UNSAVE")
     }
 
     suspend fun getSavedProducts(): List<String> {
         val uid = sessionManager?.getActiveUserId() ?: return emptyList()
-        return db?.savedProductDao()?.getSavedByUser(uid)?.map { it.productId } ?: emptyList()
+        return db?.savedProducts?.filter { it.userId == uid }?.map { it.productId } ?: emptyList()
     }
 
-    suspend fun getRecommendedFeed(): List<Product> {
+    suspend fun getRecommendedFeed(): List<ProductStorageEntity> {
         val uid = sessionManager?.getActiveUserId() ?: return emptyList()
-        val products = db?.productStorageDao()?.getActiveProducts().orEmpty()
-        val likes = db?.productInteractionDao()?.countInteractionsByType(uid, "LIKE") ?: 0
-        val dislikes = db?.productInteractionDao()?.countInteractionsByType(uid, "DISLIKE") ?: 0
+        val products = db?.products?.filter { it.status == "ACTIVE" }.orEmpty()
+        val likes = db?.productInteractions?.count { it.userId == uid && it.type == "LIKE" } ?: 0
+        val dislikes = db?.productInteractions?.count { it.userId == uid && it.type == "DISLIKE" } ?: 0
         val ratio = (likes + 1).toDouble() / (dislikes + 1)
-        return products.sortedByDescending { (it.price / 100.0) + ratio }.map { it.toLegacyModel() }
+        return products.sortedByDescending { (it.price / 100.0) + ratio }
     }
 
-    suspend fun getPendingInteractionsSync() = db?.productInteractionDao()?.getPendingInteractionsSync() ?: emptyList()
+    suspend fun getPendingInteractionsSync() = db?.productInteractions?.filter { !it.synced } ?: emptyList()
 
+    suspend fun getProducts() = db?.products?.filter { it.status == "ACTIVE" } ?: emptyList()
+
+    suspend fun getBusinesses() = db?.businesses ?: emptyList()
     private suspend fun registerInteraction(productId: String, type: String, value: String? = null, lastingMs: Long? = null) {
         val uid = sessionManager?.getActiveUserId() ?: return
-        db?.productInteractionDao()?.saveInteraction(ProductInteractionEntity(UUID.randomUUID().toString(), uid, productId, type, value, lastingMs, System.currentTimeMillis(), false))
+        db?.productInteractions?.add(
+            ProductInteractionEntity(
+                UUID.randomUUID().toString(),
+                uid,
+                productId,
+                type,
+                value,
+                lastingMs,
+                System.currentTimeMillis(),
+                false
+            )
+        )
     }
 
 
