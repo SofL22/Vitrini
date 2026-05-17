@@ -4,8 +4,10 @@ import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.vitrini.app.data.local.entity.LikeEntity
-import com.vitrini.app.data.local.entity.UserEntity
+import com.vitrini.app.data.local.preferences.SessionData
 import com.vitrini.app.data.local.preferences.SessionPreferencesDataStore
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
 class SessionManager(context: Context) {
@@ -13,33 +15,23 @@ class SessionManager(context: Context) {
 
     private val preferencesDataStore = SessionPreferencesDataStore(context)
 
-    fun saveActiveUser(user: UserEntity) {
-        val json = gson.toJson(user)
-        runBlocking { preferencesDataStore.saveActiveUser(json) }
+    fun saveSession(authToken: String, userId: String, accountType: String) {
+        runBlocking { preferencesDataStore.saveSession(authToken, userId, accountType) }
     }
 
-    fun getActiveUser(): UserEntity? {
-        val json = runBlocking { preferencesDataStore.getActiveUser() }
-        return if (json != null) gson.fromJson(json, UserEntity::class.java) else null
+    fun clearSession() {
+        runBlocking { preferencesDataStore.clearSession() }
     }
 
-    fun isUserLoggedIn(): Boolean = getActiveUser() != null || getActiveUserId() != null
-
-    fun saveActiveUserId(userId: String) {
-        runBlocking { preferencesDataStore.saveActiveUserId(userId) }
-    }
-
-    fun getActiveUserId(): String? = runBlocking { preferencesDataStore.getActiveUserId() }
-
-    fun saveAuthToken(token: String) {
-        runBlocking { preferencesDataStore.saveAuthToken(token) }
-    }
+    fun observeSession(): Flow<SessionData> = preferencesDataStore.observeSession()
 
     fun getAuthToken(): String? = runBlocking { preferencesDataStore.getAuthToken() }
 
-    fun logout() {
-        runBlocking { preferencesDataStore.clearSession() }
-    }
+    fun getActiveUserId(): String? = runBlocking { preferencesDataStore.observeSession().first().userId }
+
+    fun isUserLoggedIn(): Boolean = runBlocking { preferencesDataStore.observeSession().first().isLoggedIn }
+
+    fun logout() = clearSession()
 
     fun saveLikes(likes: List<LikeEntity>) {
         val json = gson.toJson(likes)
@@ -56,26 +48,6 @@ class SessionManager(context: Context) {
             mutableListOf()
         }
     }
-
-    fun addLike(like: LikeEntity) {
-        val likes = getLikes()
-
-        val alreadyExists = likes.any { it.userId == like.userId && it.productId == like.productId }
-
-        if (!alreadyExists) {
-            likes.add(like)
-            saveLikes(likes)
-        }
-    }
-
-    fun removeLike(userId: Int, productId: Int) {
-        val updatedLikes = getLikes().filterNot { it.userId == userId && it.productId == productId }
-
-        saveLikes(updatedLikes)
-    }
-
-    fun isProductLiked(userId: Int, productId: Int): Boolean =
-        getLikes().any { it.userId == userId && it.productId == productId }
 
     fun clearAllData() {
         runBlocking { preferencesDataStore.clearAll() }

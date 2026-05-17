@@ -35,7 +35,7 @@ object EntityMapper {
         BusinessResponseDto(
             id = entity.id,
             name = entity.name,
-            description = entity.description,
+            description = entity.ownerName,
             category = entity.category,
             location = entity.location,
             imageUrl = entity.imageUrl

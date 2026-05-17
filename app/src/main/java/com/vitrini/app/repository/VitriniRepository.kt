@@ -22,7 +22,7 @@ class VitriniRepository(
     }
 
     suspend fun saveLocalUser(user: UserEntity) {
-        db?.userDao()?.insert(user)
+        db?.userDao()?.insertOrUpdate(user)
     }
 
     suspend fun getProductById(productId: String): ProductStorageEntity? =

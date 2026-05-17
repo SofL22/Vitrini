@@ -9,14 +9,11 @@ data class UserEntity(
     @PrimaryKey val id: String,
     val name: String,
     val mail: String,
-    val password: String,
-    val interests: String = "",
     val profilePicUrl: String? = null,
-    val userType: String = "CLIENT",
+    val userType: String = "CUSTOMER",
     val location: String? = null,
     val status: String = "ACTIVE",
     val createdAt: Long,
-    val updatedAt: Long,
-    val deletedAt: Long? = null
+    val updatedAt: Long
 )
 
