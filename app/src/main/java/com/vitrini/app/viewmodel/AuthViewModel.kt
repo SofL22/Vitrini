@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.vitrini.app.data.dto.request.BusinessRegisterRequestDto
 import com.vitrini.app.data.dto.request.CustomerRegisterRequestDto
 import com.vitrini.app.data.dto.request.LoginRequestDto
+import com.vitrini.app.data.local.preferences.SessionData
 import com.vitrini.app.repository.AuthRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,23 +18,25 @@ class AuthViewModel (private val authRepository: AuthRepository) : ViewModel() {
     val authState: StateFlow<AuthUiState> = _authState.asStateFlow()
 
     fun login(email: String, password: String) {
-        if (email.isBlank() || password.isBlank()) {
-            _authState.value = AuthUiState.Error("Email and password are required")
-            return
+        when {
+            email.isBlank() -> _authState.value = AuthUiState.Error("Email is required")
+            password.isBlank() -> _authState.value = AuthUiState.Error("Password is required")
+            !isValidEmail(email) -> _authState.value = AuthUiState.Error("Invalid email format")
+            else -> executeRequest { authRepository.login(LoginRequestDto(email.trim(), password)) }
         }
-
-        executeRequest { authRepository.login(LoginRequestDto(email, password)) }
     }
 
     fun registerCustomer(fullName: String, email: String, password: String, confirmPassword: String) {
         when {
-            fullName.isBlank() -> _authState.value = AuthUiState.Error("Full name is required")
-            !email.contains("@") -> _authState.value = AuthUiState.Error("Invalid email")
+            fullName.isBlank() -> _authState.value = AuthUiState.Error("Username or full name is required")
+            email.isBlank() -> _authState.value = AuthUiState.Error("Email is required")
+            !isValidEmail(email) -> _authState.value = AuthUiState.Error("Invalid email format")
             password.isBlank() -> _authState.value = AuthUiState.Error("Password is required")
+            confirmPassword.isBlank() -> _authState.value = AuthUiState.Error("Confirm password is required")
             password != confirmPassword -> _authState.value = AuthUiState.Error("Passwords do not match")
             else -> executeRequest {
                 authRepository.registerCustomer(
-                    CustomerRegisterRequestDto(fullName, email, password, confirmPassword)
+                    CustomerRegisterRequestDto(fullName.trim(), email.trim(), password, confirmPassword)
                 )
             }
         }
@@ -48,17 +52,19 @@ class AuthViewModel (private val authRepository: AuthRepository) : ViewModel() {
         businessCategory: String? = null
     ) {
         when {
-            ownerName.isBlank() -> _authState.value = AuthUiState.Error("Owner name is required")
+            ownerName.isBlank() -> _authState.value = AuthUiState.Error("Owner full name is required")
             businessName.isBlank() -> _authState.value = AuthUiState.Error("Business name is required")
-            !email.contains("@") -> _authState.value = AuthUiState.Error("Invalid email")
+            email.isBlank() -> _authState.value = AuthUiState.Error("Email is required")
+            !isValidEmail(email) -> _authState.value = AuthUiState.Error("Invalid email format")
             password.isBlank() -> _authState.value = AuthUiState.Error("Password is required")
+            confirmPassword.isBlank() -> _authState.value = AuthUiState.Error("Confirm password is required")
             password != confirmPassword -> _authState.value = AuthUiState.Error("Passwords do not match")
             else -> executeRequest {
                 authRepository.registerBusiness(
                     BusinessRegisterRequestDto(
-                        ownerName,
-                        businessName,
-                        email,
+                        ownerName.trim(),
+                        businessName.trim(),
+                        email.trim(),
                         password,
                         confirmPassword,
                         phoneNumber,
@@ -74,14 +80,23 @@ class AuthViewModel (private val authRepository: AuthRepository) : ViewModel() {
         _authState.value = AuthUiState.Idle
     }
 
+    fun observeSession(): Flow<SessionData> = authRepository.observeSession()
+
+    fun resetState() {
+        _authState.value = AuthUiState.Idle
+    }
+
     private fun executeRequest(action: suspend () -> Unit) {
         viewModelScope.launch {
             _authState.value = AuthUiState.Loading
             runCatching { action() }
                 .onSuccess { _authState.value = AuthUiState.Success }
-                .onFailure { _authState.value = AuthUiState.Error(it.message ?: "Unknown error") }
+                .onFailure { _authState.value = AuthUiState.Error(it.message ?: "Login failed") }
         }
     }
+
+    private fun isValidEmail(email: String): Boolean =
+        android.util.Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches()
 }
 
 sealed interface AuthUiState {

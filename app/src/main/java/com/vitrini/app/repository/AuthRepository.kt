@@ -9,7 +9,9 @@ import com.vitrini.app.data.local.dao.UserDao
 import com.vitrini.app.data.local.entity.BusinessEntity
 import com.vitrini.app.data.local.entity.UserEntity
 import com.vitrini.app.data.remote.RemoteAuthDataSource
+import com.vitrini.app.data.local.preferences.SessionData
 import com.vitrini.app.utils.SessionManager
+import kotlinx.coroutines.flow.Flow
 
 class AuthRepository(
     private val remoteAuthDataSource: RemoteAuthDataSource,
@@ -38,6 +40,8 @@ class AuthRepository(
     fun logout() {
         sessionManager.clearSession()
     }
+
+    fun observeSession(): Flow<SessionData> = sessionManager.observeSession()
 
     private suspend fun persistAuthResult(response: AuthResponseDto) {
         sessionManager.saveSession(response.authToken, response.userId, response.accountType)

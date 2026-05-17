@@ -1,0 +1,100 @@
+package com.vitrini.app.ui.auth.login
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.vitrini.app.ui.components.VitriniButton
+import com.vitrini.app.ui.components.VitriniLogoFooter
+import com.vitrini.app.ui.components.VitriniTextField
+import com.vitrini.app.ui.theme.VitriniCream
+import com.vitrini.app.ui.theme.VitriniText
+
+@Composable
+fun LoginScreen(
+    onLoginSuccess: () -> Unit
+) {
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
+    var emailError by remember { mutableStateOf<String?>(null) }
+    var passwordError by remember { mutableStateOf<String?>(null) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(VitriniCream)
+            .padding(horizontal = 32.dp, vertical = 48.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column {
+            Text(
+                text = "Log In",
+                fontSize = 34.sp,
+                color = VitriniText
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            VitriniTextField(
+                value = email,
+                onValueChange = {
+                    email = it
+                    emailError = null
+                },
+                placeholder = "Email",
+                errorMessage = emailError
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            VitriniTextField(
+                value = password,
+                onValueChange = {
+                    password = it
+                    passwordError = null
+                },
+                placeholder = "Password",
+                errorMessage = passwordError,
+                visualTransformation = PasswordVisualTransformation()
+            )
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            VitriniButton(
+                text = "Log In",
+                onClick = {
+                    emailError = validateEmail(email)
+                    passwordError = if (password.isBlank()) "Password is required" else null
+
+                    if (emailError == null && passwordError == null) {
+                        onLoginSuccess()
+                    }
+                }
+            )
+        }
+
+        VitriniLogoFooter()
+    }
+}
+
+private fun validateEmail(email: String): String? {
+    return when {
+        email.isBlank() -> "Email is required"
+        !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> "Invalid email format"
+        else -> null
+    }
+}
