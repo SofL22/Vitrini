@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Index
 
-@Entity(tableName = "businesses", indices = [Index("ownerId"), Index("categoryPrincipalId")])
+@Entity(tableName = "businesses", indices = [Index("category"), Index("location")])
 data class BusinessEntity(
     @PrimaryKey
     val id: Int,
