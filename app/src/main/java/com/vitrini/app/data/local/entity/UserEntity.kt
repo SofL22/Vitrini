@@ -2,13 +2,21 @@ package com.vitrini.app.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.Index
 
-@Entity(tableName = "users")
+@Entity(tableName = "users", indices = [Index("mail")])
 data class UserEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    @PrimaryKey val id: String,
     val name: String,
     val mail: String,
     val password: String,
-    val interests: String = ""
+    val interests: String = "",
+    val profilePicUrl: String? = null,
+    val userType: String = "CLIENT",
+    val location: String? = null,
+    val status: String = "ACTIVE",
+    val createdAt: Long,
+    val updatedAt: Long,
+    val deletedAt: Long? = null
 )
+

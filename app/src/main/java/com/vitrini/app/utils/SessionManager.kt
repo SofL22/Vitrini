@@ -27,8 +27,20 @@ class SessionManager(context: Context) {
     }
 
     fun isUserLoggedIn(): Boolean {
-        return getActiveUser() != null
+        return getActiveUser() != null || getActiveUserId() != null
     }
+
+    fun saveActiveUserId(userId: String) {
+        prefs.edit().putString(Constants.KEY_ACTIVE_USER_ID, userId).apply()
+    }
+
+    fun getActiveUserId(): String? = prefs.getString(Constants.KEY_ACTIVE_USER_ID, null)
+
+    fun saveAuthToken(token: String) {
+        prefs.edit().putString(Constants.KEY_AUTH_TOKEN, token).apply()
+    }
+
+    fun getAuthToken(): String? = prefs.getString(Constants.KEY_AUTH_TOKEN, null)
 
     fun logout() {
         prefs.edit()
