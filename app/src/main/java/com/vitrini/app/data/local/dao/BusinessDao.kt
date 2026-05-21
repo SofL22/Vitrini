@@ -17,6 +17,9 @@ interface BusinessDao {
     @Query("SELECT * FROM businesses WHERE id = :id LIMIT 1")
     suspend fun getById(id: String): BusinessEntity?
 
+    @Query("SELECT * FROM businesses WHERE ownerUserId = :ownerUserId LIMIT 1")
+    suspend fun getByOwnerUserId(ownerUserId: String): BusinessEntity?
+
     @Query("DELETE FROM businesses")
     suspend fun clear()
 

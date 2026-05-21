@@ -22,6 +22,11 @@ class AuthRepository(
     private val userDao: UserDao,
     private val businessDao: BusinessDao
 ) {
+    data class CurrentUserProfile(
+        val name: String?,
+        val emailOrId: String?,
+        val businessName: String?
+    )
     suspend fun login(request: LoginRequestDto): AuthResponseDto {
         val user = userDao.getByEmail(request.email.trim())
             ?: throw IllegalArgumentException("User not found. Please register first")
@@ -88,6 +93,17 @@ class AuthRepository(
     }
 
     fun observeSession(): Flow<SessionData> = sessionManager.observeSession()
+
+    suspend fun getCurrentUserProfile(userId: String): CurrentUserProfile {
+        val user = userDao.getById(userId)
+        val business = businessDao.getByOwnerUserId(userId) ?: businessDao.getById(userId)
+
+        return CurrentUserProfile(
+            name = user?.name ?: business?.ownerName,
+            emailOrId = user?.mail ?: userId,
+            businessName = business?.name
+        )
+    }
 
     private suspend fun persistAuthResult(
         response: AuthResponseDto,

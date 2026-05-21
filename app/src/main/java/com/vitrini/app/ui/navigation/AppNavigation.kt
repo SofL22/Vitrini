@@ -1,9 +1,12 @@
 package com.vitrini.app.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -45,6 +48,16 @@ fun AppNavigation() {
             false
         )
     )
+
+    var profile by remember { mutableStateOf(AuthRepository.CurrentUserProfile(null, null, null)) }
+
+    LaunchedEffect(session.userId, session.isLoggedIn) {
+        profile = if (session.isLoggedIn && session.userId != null) {
+            authRepository.getCurrentUserProfile(session.userId!!)
+        } else {
+            AuthRepository.CurrentUserProfile(null, null, null)
+        }
+    }
 
     NavHost(navController = navController, startDestination = AppRoutes.SPLASH) {
         composable(AppRoutes.SPLASH) {
@@ -139,7 +152,21 @@ fun AppNavigation() {
         }
 
         composable(AppRoutes.FEED) {
-            if (session.isLoggedIn) FeedScreen() else {
+            if (session.isLoggedIn) {
+                FeedScreen(
+                    userName = profile.name,
+                    userEmailOrId = profile.emailOrId,
+                    businessName = profile.businessName,
+                    onLogout = {
+                        authRepository.logout()
+                        navController.navigate(AppRoutes.AUTH_START) {
+                            popUpTo(AppRoutes.FEED) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                )
+            } else {
                 navController.navigate(AppRoutes.AUTH_START) {
                     popUpTo(AppRoutes.FEED) {
                         inclusive = true
