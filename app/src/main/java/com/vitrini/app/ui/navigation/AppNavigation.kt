@@ -74,81 +74,99 @@ fun AppNavigation() {
         }
 
         composable(AppRoutes.LOGIN) {
-            LoginScreen(onLoginClick = { email, password ->
-                runCatching {
-                    kotlinx.coroutines.runBlocking {
-                        authRepository.login(
-                            LoginRequestDto(
-                                email,
-                                password
-                            )
+            LoginScreen(
+                onLoginClick = { email, password ->
+                    runCatching {
+                        kotlinx.coroutines.runBlocking {
+                            authRepository.login(
+                                LoginRequestDto(
+                                    email,
+                                    password
+                                )
                         )
                     }
                 }
-                    .fold(onSuccess = {
-                        navController.navigate(AppRoutes.FEED) {
-                            popUpTo(AppRoutes.AUTH_START) {
-                                inclusive = true
+                        .fold(onSuccess = {
+                            navController.navigate(AppRoutes.FEED) {
+                                popUpTo(AppRoutes.AUTH_START) {
+                                    inclusive = true
+                                }
+
                             }
-                        }
-                        null
-                    }, onFailure = { it.message ?: "Login failed" })
-            })
+                            null
+                        }, onFailure = { it.message ?: "Login failed" })
+                },
+                onBackClick = { navController.popBackStack() },
+                onRegisterClick = { navController.navigate(AppRoutes.REGISTER_TYPE) }
+            )
         }
 
         composable(AppRoutes.REGISTER_TYPE) {
             RegisterTypeScreen(
                 onUserClick = { navController.navigate(AppRoutes.REGISTER_USER) },
-                onBusinessClick = { navController.navigate(AppRoutes.REGISTER_BUSINESS) })
+                onBusinessClick = { navController.navigate(AppRoutes.REGISTER_BUSINESS) },
+                onBackClick = { navController.popBackStack() },
+                onLoginClick = { navController.navigate(AppRoutes.LOGIN) }
+            )
         }
 
         composable(AppRoutes.REGISTER_USER) {
-            RegisterUserScreen(onRegister = { fullName, email, password, confirmPassword ->
-                runCatching {
-                    kotlinx.coroutines.runBlocking {
-                        authRepository.registerCustomer(
-                            CustomerRegisterRequestDto(
-                                fullName,
-                                email,
-                                password,
-                                confirmPassword
+            RegisterUserScreen(
+                onRegister = { fullName, email, password, confirmPassword ->
+                    runCatching {
+                        kotlinx.coroutines.runBlocking {
+                            authRepository.registerCustomer(
+                                CustomerRegisterRequestDto(
+                                    fullName,
+                                    email,
+                                    password,
+                                    confirmPassword
+                                )
                             )
-                        )
-                    }
-                }.fold(onSuccess = {
-                    navController.navigate(AppRoutes.FEED) {
-                        popUpTo(AppRoutes.AUTH_START) {
-                            inclusive = true
+
                         }
                     }
-                    null
-                }, onFailure = { it.message ?: "Register failed" })
-            })
+                        .fold(onSuccess = {
+                            navController.navigate(AppRoutes.FEED) {
+                                popUpTo(AppRoutes.AUTH_START) {
+                                    inclusive = true
+                                }
+                            }
+                            null
+                        }, onFailure = { it.message ?: "Register failed" })
+                },
+                onBackClick = { navController.popBackStack() }
+            )
         }
 
         composable(AppRoutes.REGISTER_BUSINESS) {
-            RegisterBusinessScreen(onRegister = { ownerName, businessName, email, password, confirmPassword ->
-                runCatching {
-                    kotlinx.coroutines.runBlocking {
-                        authRepository.registerBusiness(
-                            BusinessRegisterRequestDto(
-                                ownerName,
-                                businessName,
-                                email,
-                                password,
-                                confirmPassword
+            RegisterBusinessScreen(
+                onRegister = { ownerName, businessName, email, password, confirmPassword ->
+                    runCatching {
+                        kotlinx.coroutines.runBlocking {
+                            authRepository.registerBusiness(
+                                BusinessRegisterRequestDto(
+                                    ownerName,
+                                    businessName,
+                                    email,
+                                    password,
+                                    confirmPassword
+                                )
                             )
-                        )
-                    }
-                }.fold(onSuccess = {
-                    navController.navigate(AppRoutes.FEED) {
-                        popUpTo(AppRoutes.AUTH_START) {
-                            inclusive = true
+
                         }
                     }
-                    null
-                }, onFailure = { it.message ?: "Register failed" })
-            })
+                        .fold(onSuccess = {
+                            navController.navigate(AppRoutes.FEED) {
+                                popUpTo(AppRoutes.AUTH_START) {
+                                    inclusive = true
+                                }
+                            }
+                            null
+                        }, onFailure = { it.message ?: "Register failed" })
+                },
+                onBackClick = { navController.popBackStack() }
+            )
         }
 
         composable(AppRoutes.FEED) {

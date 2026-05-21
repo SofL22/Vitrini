@@ -4,6 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -17,7 +21,10 @@ import com.vitrini.app.ui.theme.VitriniCream
 import com.vitrini.app.ui.theme.VitriniText
 
 @Composable
-fun RegisterUserScreen(onRegister: (String, String, String, String) -> String?) {
+fun RegisterUserScreen(
+    onRegister: (String, String, String, String) -> String?,
+    onBackClick: () -> Unit
+) {
     var fullName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -30,6 +37,9 @@ fun RegisterUserScreen(onRegister: (String, String, String, String) -> String?) 
 
     Column(Modifier.fillMaxSize().background(VitriniCream).padding(horizontal = 32.dp, vertical = 36.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.SpaceBetween) {
         Column {
+            IconButton(onClick = onBackClick) {
+                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+            }
             Text(text = "Register User", fontSize = 32.sp, color = VitriniText)
 
             Spacer(modifier = Modifier.height(24.dp))

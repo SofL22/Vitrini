@@ -3,10 +3,16 @@ package com.vitrini.app.ui.auth.login
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,6 +20,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,7 +34,9 @@ import com.vitrini.app.ui.theme.VitriniText
 
 @Composable
 fun LoginScreen(
-    onLoginClick: (email: String, password: String) -> String?
+    onLoginClick: (email: String, password: String) -> String?,
+    onBackClick: () -> Unit,
+    onRegisterClick: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -42,6 +53,9 @@ fun LoginScreen(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
+            IconButton(onClick = onBackClick) {
+                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+            }
 
             Text(text = "Log In", fontSize = 34.sp, color = VitriniText)
             Spacer(modifier = Modifier.height(32.dp))
@@ -68,6 +82,18 @@ fun LoginScreen(
                 }
                 }
             )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(text = "Don’t have an account?")
+                TextButton(onClick = onRegisterClick, modifier = Modifier.wrapContentWidth()) {
+                    Text(text = "Register")
+                }
+            }
         }
 
         VitriniLogoFooter()
