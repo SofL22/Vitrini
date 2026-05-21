@@ -9,6 +9,7 @@ data class UserEntity(
     @PrimaryKey val id: String,
     val name: String,
     val mail: String,
+    val password: String,
     val profilePicUrl: String? = null,
     val userType: String = "CUSTOMER",
     val location: String? = null,

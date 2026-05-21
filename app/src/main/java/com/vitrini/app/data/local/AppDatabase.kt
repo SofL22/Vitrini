@@ -27,7 +27,7 @@ import com.vitrini.app.data.local.entity.UserEntity
         ProductInteractionEntity::class,
         SavedProductEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -48,7 +48,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "vitrini_database"
-                ).build().also { INSTANCE = it }
+                ).fallbackToDestructiveMigration().build().also { INSTANCE = it }
             }
     }
 }

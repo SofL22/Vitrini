@@ -8,6 +8,7 @@ import androidx.room.Index
 data class BusinessEntity(
     @PrimaryKey
     val id: String,
+    val ownerUserId: String,
     val ownerName: String,
     val name: String,
     val category: String,
