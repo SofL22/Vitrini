@@ -9,9 +9,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -23,57 +27,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vitrini.app.ui.components.VitriniButton
 import com.vitrini.app.ui.components.VitriniLogoFooter
-import com.vitrini.app.ui.theme.VitriniCream
-import com.vitrini.app.ui.theme.VitriniText
+import com.vitrini.app.ui.theme.VitriniBackgroundSecondary
+import com.vitrini.app.ui.theme.VitriniCard
+import com.vitrini.app.ui.theme.VitriniLink
+import com.vitrini.app.ui.theme.VitriniTitle
 
 @Composable
-fun RegisterTypeScreen(
-    onUserClick: () -> Unit,
-    onBusinessClick: () -> Unit,
-    onBackClick: () -> Unit,
-    onLoginClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(VitriniCream)
-            .padding(horizontal = 32.dp, vertical = 48.dp),
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
+fun RegisterTypeScreen(onUserClick: () -> Unit, onBusinessClick: () -> Unit, onBackClick: () -> Unit, onLoginClick: () -> Unit) {
+    Column(modifier = Modifier.fillMaxSize().background(VitriniBackgroundSecondary).padding(horizontal = 28.dp, vertical = 56.dp), verticalArrangement = Arrangement.SpaceBetween) {
         Column {
-            IconButton(onClick = onBackClick) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
-            }
-            Text(
-                text = "Register",
-                fontSize = 34.sp,
-                color = VitriniText
-            )
-
-            Spacer(modifier = Modifier.height(40.dp))
-
-            VitriniButton(
-                text = "User",
-                onClick = onUserClick
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            VitriniButton(
-                text = "Business",
-                onClick = onBusinessClick
-            )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(text = "Already have an account?")
-                TextButton(onClick = onLoginClick, modifier = Modifier.wrapContentWidth()) {
-                    Text(text = "Log In")
+            Text(text = "Register", fontSize = 44.sp, color = VitriniTitle)
+            Spacer(modifier = Modifier.height(24.dp))
+            Card(shape = RoundedCornerShape(36.dp), colors = CardDefaults.cardColors(containerColor = VitriniCard), elevation = CardDefaults.cardElevation(defaultElevation = 14.dp), modifier = Modifier.fillMaxWidth()) {
+                Column(Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    VitriniButton("User", onUserClick, modifier = Modifier.width(300.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
+                    VitriniButton("Business", onBusinessClick, modifier = Modifier.width(300.dp))
                 }
+            }
+            Spacer(modifier = Modifier.height(14.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Text("Already have an account? ", color = VitriniLink)
+                TextButton(onClick = onLoginClick) { Text("Login", color = VitriniLink) }
             }
         }
 

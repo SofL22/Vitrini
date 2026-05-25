@@ -23,7 +23,6 @@ import com.vitrini.app.ui.auth.login.LoginScreen
 import com.vitrini.app.ui.auth.register.RegisterBusinessScreen
 import com.vitrini.app.ui.auth.register.RegisterTypeScreen
 import com.vitrini.app.ui.auth.register.RegisterUserScreen
-import com.vitrini.app.ui.auth.start.AuthStartScreen
 import com.vitrini.app.ui.feed.FeedScreen
 import com.vitrini.app.ui.splash.SplashScreen
 import com.vitrini.app.utils.SessionManager
@@ -64,7 +63,7 @@ fun AppNavigation() {
 
     LaunchedEffect(session.isLoggedIn, currentRoute) {
         if (!session.isLoggedIn && currentRoute == AppRoutes.FEED) {
-            navController.navigate(AppRoutes.AUTH_START) {
+            navController.navigate(AppRoutes.LOGIN) {
                 popUpTo(0) { inclusive = true }
                 launchSingleTop = true
             }
@@ -75,14 +74,8 @@ fun AppNavigation() {
         composable(AppRoutes.SPLASH) {
             SplashScreen(onSplashFinished = {
                 val nextRoute = if (session.isLoggedIn) AppRoutes.FEED else AppRoutes.AUTH_START
-                navController.navigate(nextRoute) { popUpTo(AppRoutes.SPLASH) { inclusive = true } }
+                navController.navigate(AppRoutes.LOGIN) { popUpTo(AppRoutes.SPLASH) { inclusive = true } }
             })
-        }
-
-        composable(AppRoutes.AUTH_START) {
-            AuthStartScreen(
-                onLoginClick = { navController.navigate(AppRoutes.LOGIN) },
-                onRegisterClick = { navController.navigate(AppRoutes.REGISTER_TYPE) })
         }
 
         composable(AppRoutes.LOGIN) {
@@ -100,7 +93,7 @@ fun AppNavigation() {
                 }
                         .fold(onSuccess = {
                             navController.navigate(AppRoutes.FEED) {
-                                popUpTo(AppRoutes.AUTH_START) {
+                                popUpTo(AppRoutes.LOGIN) {
                                     inclusive = true
                                 }
 
@@ -140,7 +133,7 @@ fun AppNavigation() {
                     }
                         .fold(onSuccess = {
                             navController.navigate(AppRoutes.FEED) {
-                                popUpTo(AppRoutes.AUTH_START) {
+                                popUpTo(AppRoutes.LOGIN) {
                                     inclusive = true
                                 }
                             }
@@ -170,7 +163,7 @@ fun AppNavigation() {
                     }
                         .fold(onSuccess = {
                             navController.navigate(AppRoutes.FEED) {
-                                popUpTo(AppRoutes.AUTH_START) {
+                                popUpTo(AppRoutes.LOGIN) {
                                     inclusive = true
                                 }
                             }
@@ -188,7 +181,7 @@ fun AppNavigation() {
                 businessName = profile.businessName,
                 onLogout = {
                     authRepository.logout()
-                    navController.navigate(AppRoutes.AUTH_START) {
+                    navController.navigate(AppRoutes.LOGIN) {
                         popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }

@@ -6,21 +6,26 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-val VitriniCream = Color(0xFFFFFBF6)
-val VitriniMauve = Color(0xFF8B5E66)
-val VitriniSoftPink = Color(0xFFE8C8C4)
-val VitriniText = Color(0xFF3D2C2E)
-val VitriniFieldBackground = Color(0xFFF4E8E3)
+val VitriniBackgroundMain = Color(0xFFFEF9F9)
+val VitriniBackgroundSecondary = Color(0xFFFAF0EF)
+val VitriniCard = Color(0xFFFFFFFF)
+val VitriniCardShadow = Color(0xFFD8C4C2)
+val VitriniFieldBackground = Color(0xFFF3EFED)
+val VitriniPlaceholder = Color(0xFFAAA3A4)
+val VitriniTitle = Color(0xFF9C686F)
+val VitriniMauve = Color(0xFF97656D)
+val VitriniLink = Color(0xFF7EA7B0)
+val VitriniLogo = Color(0xFFFBB0C2)
 
 private val VitriniLightColors = lightColorScheme(
     primary = VitriniMauve,
-    secondary = VitriniSoftPink,
-    background = VitriniCream,
-    surface = VitriniCream,
+    secondary = VitriniLink,
+    background = VitriniBackgroundMain,
+    surface = VitriniCard,
     onPrimary = Color.White,
-    onSecondary = VitriniText,
-    onBackground = VitriniText,
-    onSurface = VitriniText
+    onSecondary = VitriniTitle,
+    onBackground = VitriniTitle,
+    onSurface = VitriniTitle
 )
 
 @Composable

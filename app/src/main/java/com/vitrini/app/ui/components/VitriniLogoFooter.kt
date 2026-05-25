@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.vitrini.app.ui.theme.VitriniMauve
+import com.vitrini.app.ui.theme.VitriniLogo
 
 @Composable
 fun VitriniLogoFooter(
@@ -22,7 +22,7 @@ fun VitriniLogoFooter(
     ) {
         Text(
             text = "VITRINI",
-            color = VitriniMauve,
+            color = VitriniLogo,
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
             fontFamily = FontFamily.Serif
@@ -31,7 +31,7 @@ fun VitriniLogoFooter(
         if (showSlogan) {
             Text(
                 text = "conectando usuarios con emprendimientos locales",
-                color = VitriniMauve,
+                color = VitriniLogo,
                 fontSize = 13.sp
             )
         }

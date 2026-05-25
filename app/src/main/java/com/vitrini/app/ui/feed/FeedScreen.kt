@@ -20,8 +20,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vitrini.app.ui.theme.VitriniCream
-import com.vitrini.app.ui.theme.VitriniText
+import com.vitrini.app.ui.theme.VitriniBackgroundMain
+import com.vitrini.app.ui.theme.VitriniMauve
+
 
 private enum class MainSection {
     FEED,
@@ -39,7 +40,7 @@ fun FeedScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(VitriniCream)
+            .background(VitriniBackgroundMain)
             .padding(24.dp)
     ) {
         when (selectedSection) {
@@ -66,12 +67,12 @@ private fun FeedContent() {
     Text(
         text = "Feed",
         fontSize = 26.sp,
-        color = VitriniText
+        color = VitriniMauve
     )
     Spacer(modifier = Modifier.height(16.dp))
     Text(
         text = "Bienvenido al feed principal de Vitrini.",
-        color = VitriniText,
+        color = VitriniMauve,
         fontSize = 18.sp
     )
 }
@@ -86,16 +87,16 @@ private fun MeContent(
     Text(
         text = "Me",
         fontSize = 26.sp,
-        color = VitriniText
+        color = VitriniMauve
     )
 
     Spacer(modifier = Modifier.height(24.dp))
 
-    Text(text = "Nombre: ${userName ?: "No disponible"}", color = VitriniText, fontSize = 18.sp)
+    Text(text = "Nombre: ${userName ?: "No disponible"}", color = VitriniMauve, fontSize = 18.sp)
     Spacer(modifier = Modifier.height(12.dp))
-    Text(text = "Correo / ID: ${userEmailOrId ?: "No disponible"}", color = VitriniText, fontSize = 18.sp)
+    Text(text = "Correo / ID: ${userEmailOrId ?: "No disponible"}", color = VitriniMauve, fontSize = 18.sp)
     Spacer(modifier = Modifier.height(12.dp))
-    Text(text = "Emprendimiento: ${businessName ?: "Aún no registrado"}", color = VitriniText, fontSize = 18.sp)
+    Text(text = "Emprendimiento: ${businessName ?: "Aún no registrado"}", color = VitriniMauve, fontSize = 18.sp)
     Spacer(modifier = Modifier.height(24.dp))
 
     Button(onClick = onLogout, modifier = Modifier.fillMaxWidth()) {
@@ -117,7 +118,7 @@ private fun MainNavigationBar(
             onClick = onFeedClick,
             modifier = Modifier.weight(1f),
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (selectedSection == MainSection.FEED) VitriniText else VitriniText.copy(
+                containerColor = if (selectedSection == MainSection.FEED) VitriniMauve else VitriniMauve.copy(
                     alpha = 0.5f
                 )
             )
@@ -128,7 +129,7 @@ private fun MainNavigationBar(
             onClick = onMeClick,
             modifier = Modifier.weight(1f),
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (selectedSection == MainSection.ME) VitriniText else VitriniText.copy(
+                containerColor = if (selectedSection == MainSection.ME) VitriniMauve else VitriniMauve.copy(
                     alpha = 0.5f
                 )
             )

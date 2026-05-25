@@ -13,6 +13,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.vitrini.app.ui.theme.VitriniFieldBackground
 import com.vitrini.app.ui.theme.VitriniMauve
+import com.vitrini.app.ui.theme.VitriniPlaceholder
 
 @Composable
 fun VitriniTextField(
@@ -26,13 +27,9 @@ fun VitriniTextField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        placeholder = { Text(placeholder) },
+        placeholder = { Text(placeholder, color = VitriniPlaceholder) },
         isError = errorMessage != null,
-        supportingText = {
-            if (errorMessage != null) {
-                Text(text = errorMessage)
-            }
-        },
+        supportingText = { if (errorMessage != null) Text(text = errorMessage) },
         visualTransformation = visualTransformation,
         singleLine = true,
         modifier = modifier
@@ -44,7 +41,11 @@ fun VitriniTextField(
             unfocusedContainerColor = VitriniFieldBackground,
             errorContainerColor = VitriniFieldBackground,
             focusedIndicatorColor = VitriniMauve,
-            unfocusedIndicatorColor = Color.Transparent
+            unfocusedIndicatorColor = Color.Transparent,
+            unfocusedTextColor = VitriniMauve,
+            focusedTextColor = VitriniMauve,
+            cursorColor = VitriniMauve
+
         )
     )
 }

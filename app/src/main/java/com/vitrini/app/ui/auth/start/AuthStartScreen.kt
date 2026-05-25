@@ -12,7 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.vitrini.app.ui.components.VitriniButton
 import com.vitrini.app.ui.components.VitriniLogoFooter
-import com.vitrini.app.ui.theme.VitriniCream
+import com.vitrini.app.ui.theme.VitriniBackgroundSecondary
+
 
 @Composable
 fun AuthStartScreen(
@@ -22,7 +23,7 @@ fun AuthStartScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(VitriniCream)
+            .background(VitriniBackgroundSecondary)
             .padding(horizontal = 32.dp, vertical = 48.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {

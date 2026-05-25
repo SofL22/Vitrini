@@ -9,7 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.vitrini.app.ui.components.VitriniLogoFooter
-import com.vitrini.app.ui.theme.VitriniCream
+import com.vitrini.app.ui.theme.VitriniBackgroundMain
 import kotlinx.coroutines.delay
 
 @Composable
@@ -24,7 +24,7 @@ fun SplashScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(VitriniCream),
+            .background(VitriniBackgroundMain),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
